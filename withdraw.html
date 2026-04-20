@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Withdraw Cash</title>
+  <style>
+    .card {
+      width: 320px;
+      border: 2px solid var(--border);
+      padding: 20px;
+      margin: 50px auto;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background-color: var(--card-bg);
+      color: var(--text);
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+    .form-group {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+    input[type="number"] {
+      width: 150px;
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: var(--button-hover);
+    }
+    .back-btn {
+      background-color: var(--muted);
+    }
+    .back-btn:hover {
+      background-color: var(--muted-hover);
+    }
+    .error {
+      color: #d9534f;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .warning {
+      color: #f0ad4e;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    :root {
+      --bg: #f0f0f0;
+      --text: #000000;
+      --card-bg: #ffffff;
+      --border: #000000;
+      --button-bg: #e0e0e0;
+      --button-text: #000000;
+      --button-hover: #c0c0c0;
+      --primary: #007bff;
+      --primary-hover: #0056b3;
+      --success: #28a745;
+      --success-hover: #218838;
+      --muted: #6c757d;
+      --muted-hover: #444444;
+      --table-header: #004080;
+      --table-header-text: #ffffff;
+      --table-row-even: #f2f2f2;
+      --table-row-odd: #ffffff;
+      --table-border: #000000;
+    }
+    .dark-mode {
+      --bg: #121212;
+      --text: #f0f0f0;
+      --card-bg: #1e1e1e;
+      --border: #444444;
+      --button-bg: #333333;
+      --button-text: #ffffff;
+      --button-hover: #555555;
+      --primary: #5b9cff;
+      --primary-hover: #4077e0;
+      --success: #43c475;
+      --success-hover: #2fa853;
+      --muted: #777777;
+      --muted-hover: #999999;
+      --table-header: #295b98;
+      --table-header-text: #ffffff;
+      --table-row-even: #232f3f;
+      --table-row-odd: #1b2430;
+      --table-border: #3a3a3a;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    th {
+      background-color: var(--table-header);
+      color: var(--table-header-text);
+    }
+    tr:nth-child(even) {
+      background-color: var(--table-row-even);
+    }
+    tr:nth-child(odd) {
+      background-color: var(--table-row-odd);
+    }
+    table, th, td {
+      border-color: var(--table-border);
+    }
+    .switch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #EA3680;
+      transition: 0.4s;
+      border-radius: 30px;
+      text-align: center;
+      line-height: 30px;
+      font-size: 16px;
+    }
+    input:checked + .slider {
+      background-color: #216370;
+    }
+  </style>
+</head>
+<body>
+  <label class="switch">
+    <input type="checkbox" id="toggleSwitch">
+    <span class="slider">🌙</span>
+  </label>
+  <div class="card">
+    <h2>WITHDRAW CASH</h2>
+    <form id="withdrawForm" action="withdraw" method="post">
+      <div class="form-group">
+        Enter Amount: <br>
+        <input type="number" id="amount" name="amount" required>
+        <div id="message" aria-live="polite"></div>
+      </div>
+      <button type="submit" class="btn">Withdraw</button>
+      <a href="atm_menu.html" class="btn back-btn">Back</a>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('withdrawForm');
+    const amountInput = document.getElementById('amount');
+    const messageDiv = document.getElementById('message');
+    
+
+    form.addEventListener('submit', function(event) {
+      const amount = parseFloat(amountInput.value);
+      messageDiv.textContent = "";
+      messageDiv.classList.remove("error", "warning");
+
+      if (isNaN(amount) || amount <= 0) {
+        event.preventDefault();
+        messageDiv.textContent = "❌ Please enter a valid amount.";
+        messageDiv.classList.add("error");
+      }
+    });
+
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const themeKey = 'atm-dark-mode';
+    const slider = document.querySelector('.slider');
+
+    const applyTheme = (darkMode) => {
+      document.body.classList.toggle('dark-mode', darkMode);
+      toggleSwitch.checked = darkMode;
+      slider.textContent = darkMode ? "☀️" : "🌙";
+    };
+
+    const saved = localStorage.getItem(themeKey);
+    applyTheme(saved === '1');
+
+    toggleSwitch.addEventListener('change', () => {
+      const isDark = toggleSwitch.checked;
+      applyTheme(isDark);
+      localStorage.setItem(themeKey, isDark ? '1' : '0');
+    });
+  </script>
+</body>
+</html>

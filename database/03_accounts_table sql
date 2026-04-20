@@ -1,0 +1,30 @@
+USE atm_management;
+
+CREATE TABLE IF NOT EXISTS accounts (
+    account_id     INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id        INT UNSIGNED NOT NULL,
+    account_number VARCHAR(20) NOT NULL UNIQUE,
+    account_type   ENUM('Savings','Current') NOT NULL,
+    balance        DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    currency       VARCHAR(10) DEFAULT 'INR',
+    status         ENUM('active','inactive','closed') DEFAULT 'active',
+    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (account_id),
+
+    CONSTRAINT fk_accounts_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE accounts;
+SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO accounts (user_id, account_number, account_type, balance, currency)
+VALUES
+(1, 'ACC1001', 'Savings', 50000.00, 'INR'),
+(2, 'ACC1002', 'Savings', 60000.00, 'INR'),
+(3, 'ACC1003', 'Current', 70000.00, 'INR');
+
+SELECT * FROM accounts;

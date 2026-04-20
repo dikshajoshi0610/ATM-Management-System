@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATM Login</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --form-bg: #f0f0f0;
+      --button-bg: #FFD700;
+      --button-text: #051843;
+      --border: #ccc;
+      --error-bg: #ffe0e0;
+      --error-text: #c0392b;
+    }
+    .dark-mode {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --form-bg: #1e1e1e;
+      --button-bg: #FFA500;
+      --button-text: #ffffff;
+      --border: #555;
+      --error-bg: #4a1a1a;
+      --error-text: #ff6b6b;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    h1 { margin-bottom: 20px; }
+    form {
+      background-color: var(--form-bg);
+      padding: 30px 40px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
+    }
+    label { font-weight: bold; display: block; margin-bottom: 4px; }
+    input[type="text"], input[type="password"] {
+      margin: 6px 0 16px 0;
+      padding: 10px;
+      width: 220px;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    button {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: none;
+      padding: 12px 30px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 8px;
+      width: 100%;
+    }
+    button:hover { opacity: 0.9; }
+    .error-msg {
+      background-color: var(--error-bg);
+      color: var(--error-text);
+      padding: 10px 16px;
+      border-radius: 5px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: none;
+    }
+    .switch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      background-color: #EA3680;
+      border-radius: 30px;
+      width: 100%;
+      height: 100%;
+      transition: 0.4s;
+    }
+    .slider:before {
+      content: "🌙";
+      position: absolute;
+      left: 8px;
+      bottom: 4px;
+      font-size: 16px;
+      transition: 0.4s;
+    }
+    input:checked + .slider { background-color: #216370; }
+    input:checked + .slider:before {
+      content: "☀️";
+      transform: translateX(28px);
+    }
+  </style>
+</head>
+<body>
+  <label class="switch">
+    <input type="checkbox" id="toggleSwitch">
+    <span class="slider"></span>
+  </label>
+
+  <h1>ATM Management System</h1>
+
+  <form action="login" method="post">
+    <div id="errorBox" class="error-msg"></div>
+
+    <label for="cardNumber">Card Number</label>
+    <input type="text" id="cardNumber" name="cardNumber" maxlength="19" placeholder="Enter 16-digit card number" required><br>
+
+    <label for="pin">PIN</label>
+    <input type="password" id="pin" name="pin" maxlength="4" placeholder="Enter 4-digit PIN" required><br>
+
+    <button type="submit">LOGIN</button>
+  </form>
+
+  <script>
+    // Show error from URL param
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    const errorBox = document.getElementById('errorBox');
+    if (err) {
+      errorBox.style.display = 'block';
+      if (err === 'invalid')   errorBox.textContent = '❌ Invalid Card Number or PIN. Please try again.';
+      else if (err === 'empty') errorBox.textContent = '⚠️ Card Number and PIN cannot be empty.';
+      else if (err === 'dbfail') errorBox.textContent = '🔌 Database connection failed. Please contact support.';
+    }
+
+    // Dark mode
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const themeKey = 'atm-dark-mode';
+    const applyTheme = (darkMode) => {
+      document.body.classList.toggle('dark-mode', darkMode);
+      toggleSwitch.checked = darkMode;
+    };
+    applyTheme(localStorage.getItem(themeKey) === '1');
+    toggleSwitch.addEventListener('change', () => {
+      const isDark = toggleSwitch.checked;
+      applyTheme(isDark);
+      localStorage.setItem(themeKey, isDark ? '1' : '0');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Change PIN</title>
+  <meta charset="UTF-8">
+  <style>
+    .card {
+      width: 350px;
+      border: 2px solid #000;
+      padding: 20px;
+      margin: 60px auto;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .card h2 {
+      margin: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #000;
+    }
+    .form-group {
+      margin: 15px 0;
+      text-align: left;
+      font-size: 16px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .back-btn {
+      background-color: #6c757d;
+    }
+    .back-btn:hover {
+      background-color: #444;
+    }
+    .error {
+      color: #d9534f; 
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    :root {
+      --bg: #f0f0f0;
+      --text: #000000;
+      --card-bg: #ffffff;
+      --border: #000000;
+      --button-bg: #e0e0e0;
+      --button-text: #000000;
+      --button-hover: #c0c0c0;
+      --primary: #007bff;
+      --primary-hover: #0056b3;
+      --success: #28a745;
+      --success-hover: #218838;
+      --muted: #6c757d;
+      --muted-hover: #444444;
+      --table-header: #004080;
+      --table-header-text: #ffffff;
+      --table-row-even: #f2f2f2;
+      --table-row-odd: #ffffff;
+      --table-border: #000000;
+    }
+    .dark-mode {
+      --bg: #121212;
+      --text: #f0f0f0;
+      --card-bg: #1e1e1e;
+      --border: #444444;
+      --button-bg: #333333;
+      --button-text: #ffffff;
+      --button-hover: #555555;
+      --primary: #5b9cff;
+      --primary-hover: #4077e0;
+      --success: #43c475;
+      --success-hover: #2fa853;
+      --muted: #777777;
+      --muted-hover: #999999;
+      --table-header: #295b98;
+      --table-header-text: #ffffff;
+      --table-row-even: #232f3f;
+      --table-row-odd: #1b2430;
+      --table-border: #3a3a3a;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      color: var(--text);
+      border-color: var(--border);
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
+    .switch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #EA3680;
+      transition: 0.4s;
+      border-radius: 30px;
+    }
+    .slider:before {
+      content: "🌙"; /* default moon */
+      position: absolute;
+      left: 8px;
+      bottom: 4px;
+      font-size: 16px;
+      transition: 0.4s;
+    }
+    input:checked + .slider {
+      background-color: #216370;
+    }
+    input:checked + .slider:before {
+      content: "☀️"; /* show sun when checked */
+      transform: translateX(30px);
+    }
+  </style>
+</head>
+<body>
+  <label class="switch">
+    <input type="checkbox" id="toggleSwitch">
+    <span class="slider"></span>
+  </label>
+  <div class="card">
+    <h2>CHANGE PIN</h2>
+    <form id="pinForm" action="changePin" method="post">
+      <div class="form-group">
+        <label for="oldPin">Old PIN:</label>
+        <input type="password" id="oldPin" maxlength="4" name="oldPin" required>
+      </div>
+      <div class="form-group">
+        <label for="newPin">New PIN:</label>
+        <input type="password" id="newPin" maxlength="4" name="newPin" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPin">Confirm PIN:</label>
+        <input type="password" id="confirmPin" maxlength="4" name="confirmPin" required>
+        <div id="errorMessage" class="error"></div>
+      </div>
+      <button type="submit" class="btn">Change PIN</button>
+      <a href="atm_menu.html" class="btn back-btn">Back to Menu</a>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('pinForm');
+    const oldPin = document.getElementById('oldPin');
+    const newPin = document.getElementById('newPin');
+    const confirmPin = document.getElementById('confirmPin');
+    const errorMessage = document.getElementById('errorMessage');
+
+    form.addEventListener('submit', function(event) {
+      errorMessage.textContent = "";
+
+      if (newPin.value === oldPin.value) {
+        event.preventDefault();
+        errorMessage.textContent = "❌ New PIN cannot be the same as Old PIN.";
+      } else if (newPin.value !== confirmPin.value) {
+        event.preventDefault();
+        errorMessage.textContent = "❌ New PIN and Confirm PIN do not match.";
+      }
+    });
+
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const themeKey = 'atm-dark-mode';
+
+    const applyTheme = (darkMode) => {
+      document.body.classList.toggle('dark-mode', darkMode);
+      toggleSwitch.checked = darkMode;
+    };
+
+    const saved = localStorage.getItem(themeKey);
+    applyTheme(saved === '1');
+
+    toggleSwitch.addEventListener('change', () => {
+      const isDark = toggleSwitch.checked;
+      applyTheme(isDark);
+      localStorage.setItem(themeKey, isDark ? '1' : '0');
+    });
+  </script>
+</body>
+</html>

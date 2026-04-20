@@ -1,0 +1,159 @@
+
+    <!DOCTYPE html>
+<html>
+<head>
+  <title>Thank You</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="5;url=index.html">
+  <style>
+    .card {
+      width: 350px;
+      border: 2px solid #000;
+      padding: 20px;
+      margin: 80px auto;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .card h2 {
+      margin: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #000;
+    }
+    .message {
+      font-size: 18px;
+      margin: 20px 0;
+    }
+    .emoji {
+      font-size: 22px;
+    }
+    .redirect {
+      font-size: 14px;
+      color: #555;
+      margin-top: 15px;
+    }
+
+    :root {
+      --bg: #f0f0f0;
+      --text: #000000;
+      --card-bg: #ffffff;
+      --border: #000000;
+      --button-bg: #e0e0e0;
+      --button-text: #000000;
+      --button-hover: #c0c0c0;
+      --primary: #007bff;
+      --primary-hover: #0056b3;
+      --success: #28a745;
+      --success-hover: #218838;
+      --muted: #6c757d;
+      --muted-hover: #444444;
+      --table-header: #004080;
+      --table-header-text: #ffffff;
+      --table-row-even: #f2f2f2;
+      --table-row-odd: #ffffff;
+      --table-border: #000000;
+    }
+    .dark-mode {
+      --bg: #121212;
+      --text: #f0f0f0;
+      --card-bg: #1e1e1e;
+      --border: #444444;
+      --button-bg: #333333;
+      --button-text: #ffffff;
+      --button-hover: #555555;
+      --primary: #5b9cff;
+      --primary-hover: #4077e0;
+      --success: #43c475;
+      --success-hover: #2fa853;
+      --muted: #777777;
+      --muted-hover: #999999;
+      --table-header: #295b98;
+      --table-header-text: #ffffff;
+      --table-row-even: #232f3f;
+      --table-row-odd: #1b2430;
+      --table-border: #3a3a3a;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      color: var(--text);
+      border-color: var(--border);
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
+    .switch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #EA3680;
+      transition: 0.4s;
+      border-radius: 30px;
+    }
+    .slider:before {
+      content: "🌙"; /* default moon */
+      position: absolute;
+      left: 8px;
+      bottom: 4px;
+      font-size: 16px;
+      transition: 0.4s;
+    }
+    input:checked + .slider {
+      background-color: #216370;
+    }
+    input:checked + .slider:before {
+      content: "☀️"; /* show sun when checked */
+      transform: translateX(30px);
+    }
+  </style>
+</head>
+<body>
+  <label class="switch">
+    <input type="checkbox" id="toggleSwitch">
+    <span class="slider"></span>
+  </label>
+  <div class="card">
+    <h2>Thank you for using ATM!</h2>
+    <div class="message">Please take your card <span class="emoji">😊</span></div>
+    <div class="redirect">Redirecting to login page in 5 seconds...</div>
+  </div>
+  <script>
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const themeKey = 'atm-dark-mode';
+
+    const applyTheme = (darkMode) => {
+      document.body.classList.toggle('dark-mode', darkMode);
+      toggleSwitch.checked = darkMode;
+    };
+
+    const saved = localStorage.getItem(themeKey);
+    applyTheme(saved === '1');
+
+    toggleSwitch.addEventListener('change', () => {
+      const isDark = toggleSwitch.checked;
+      applyTheme(isDark);
+      localStorage.setItem(themeKey, isDark ? '1' : '0');
+    });
+  </script>
+</body>
+</html>
